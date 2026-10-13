@@ -1,0 +1,32 @@
+# Known-good environment pins (recorded 2026-10-14)
+ARMADAOS=20261010.c3d178c
+KERNEL=7.2.6
+ARCH=aarch64
+PAGE_SIZE=4096
+PROTON_BUILD_ID=1791559733
+PROTON_VERSION=proton-11.0-2e-arm64
+VALVE_WINE_COMMIT=e60892cc2398b0a83c332a2078c7b85e47bdb42b
+DXVK_COMMIT=a6764047e587178283fcde4073ae6e1410af594f
+DXBC_SPIRV_COMMIT=fe5a4ef1e99357c8b9f57e4cfb1195c3dae9707f
+MESA_VERSION=26.2.4
+MESA_TAG_COMMIT=96cb43121031992b85767f9c1be8f3f48e22b1d2
+MESA_BACKPORT_COMMIT=2f8dc9eaba06770ea50583bef175e41792048ced
+LLVM_MINGW_VERSION=20260922
+LLVM_MINGW_SHA256=07d21263c56bfe9a713db6fdb3f7434bf4c121a005e40397d3b4c0170fb06769
+LLVM_MINGW_URL=https://github.com/mstorsjo/llvm-mingw/releases/download/20260922/llvm-mingw-20260922-ucrt-ubuntu-22.04-aarch64.tar.xz
+
+# Outputs of a start-to-finish run of scripts/ in the default layout (~/wow-arm64-work) on the device, 2026-10-14.
+# Hashes depend on the build paths, containers and toolchain; a mismatch is a prompt to compare those, not proof of a bad build.
+NTDLL_SO_SHA256=4a618734f5b0af175966f9e18eaba706f607a5bd7aa906444c49bb8409268bf3
+NTDLL_DLL_SHA256=fa1de49344ef71adb36d0574b0223e4369b6b9dbba0f9995245a5fcdafcdc8eb
+DXVK_DXGI_SHA256=b053901305d48e93aac68ec79ecd6305bff2f7512f24504839ca67279ee20a9c
+DXVK_D3D11_SHA256=0080966f2dc4d63518e9f7b895aee1652335195067075fdb1fbadb2809d050c8
+TURNIP_SO_SHA256=c2ecb1a97b5bd391fa4e543a233dc66e21a2739ca1370af8dc683ba5aeaee005
+STOCK_NTDLL_SO_SHA256_PREFIX=9c618d49c9926f55
+STOCK_NTDLL_DLL_SHA256_PREFIX=5bab1f413ea1032b
+WINE_CONFIGURE_ARGS="--enable-archs=aarch64,arm64ec --with-mingw=clang --disable-tests --without-x --without-freetype --without-gstreamer --without-vulkan --without-wayland CC=clang CXX=clang++"
+WINE_BUILD_CONTAINER=docker.io/library/ubuntu:24.04
+MESA_BUILD_CONTAINER=registry.fedoraproject.org/fedora:44
+WINE_COPIED_SYSCALL_TAIL_COUNT=258
+WINE_COPIED_SYSCALL_TEB_OFFSET=0x368
+DXVK_PE_MACHINE=0xaa64

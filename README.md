@@ -1,0 +1,27 @@
+# ArmadaOS AYN Thor WoW ARM64 compatibility project
+
+Source-only build notes and scripts for testing an unmodified Windows ARM64 game client with open-source compatibility components on AYN Thor/ArmadaOS. This independent project is not affiliated with, endorsed by, or sponsored by Blizzard Entertainment, Valve, or AYN. “World of Warcraft”, “Blizzard”, “Battle.net”, “ArmadaOS”, “Proton”, and related marks belong to their owners; names are used only to identify compatibility targets and upstream projects.
+
+**No Blizzard software or assets are distributed.** Obtain/update the game only through official Blizzard channels. This project does not authenticate, download, update, or launch Blizzard services on your behalf.
+
+## Status
+
+Checked on an AYN Thor (ArmadaOS `20261010.c3d178c`, stock Proton `proton-11.0-2e-arm64`) on 2026-10-14: with the three components below built from this repository's patches, the ARM64 client launches, stays open and holds 60 fps at 720p on low detail. That result is from a start-to-finish run of the scripts in a clean work directory on that device. Longer sessions have not been characterised. Pins in `VERSION-PINS` record that one setup, not a guarantee of future compatibility.
+
+## What it changes
+
+Stock Proton is never modified. The scripts make a private copy under `~/.local/share/Steam/compatibilitytools.d/` and replace four files in it; the graphics driver is a private build selected per launch.
+
+| Component | Problem with stock | What this repository does |
+|---|---|---|
+| Wine `ntdll` | The client copies syscall stubs out of `ntdll.dll`; the stock ARM64 stub depends on a PC-relative literal that the copy loses, and the game crashes on a null jump. | `patches/wine`: independently drafted patch that loads the dispatcher through the TEB instead. Built as an ARM64X hybrid, as Proton requires. |
+| DXVK | Proton 11.0 ships its ARM64 DXVK as ARM64EC only, which a native ARM64 process cannot load. | Builds the same DXVK commit for native ARM64 (`patches/dxvk` are build fixes only). |
+| Mesa Turnip | Mesa 26.2.4 cannot compile one of the game's fragment shaders. | `patches/mesa`: unmodified backport of the upstream fix. |
+
+See [docs/TECHNICAL.md](docs/TECHNICAL.md) for the details and [docs/TROUBLESHOOTING.md](docs/TROUBLESHOOTING.md) for the failure signatures.
+
+## Use
+
+Follow [docs/BUILD.md](docs/BUILD.md) from top to bottom. Review the scripts before running them. Everything is built under `~/wow-arm64-work` (override with `WOW_WORK_DIR`); nothing is installed system-wide and no `sudo` is used on the host.
+
+Running the game this way is not supported by Blizzard and is at your own risk. For what the repository contains, where each patch comes from and under which licence, see [docs/LEGAL.md](docs/LEGAL.md) and [NOTICE.md](NOTICE.md).

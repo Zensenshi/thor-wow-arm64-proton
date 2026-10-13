@@ -1,0 +1,45 @@
+From 2f8dc9eaba06770ea50583bef175e41792048ced Mon Sep 17 00:00:00 2001
+From: Job Noorman <jnoorman@igalia.com>
+Date: Tue, 22 Sep 2026 15:42:54 +0200
+Subject: [PATCH] ir3/sched: don't try to schedule kill after bary.f in
+ different block
+
+We try to schedule kills after all bary.f, even if the bary.f is in a
+different block. This would then lead to scheduling failures because the
+kill would never be ready to be scheduled. Since newer gens don't
+actually need kill to be scheduled after all bary.f, simply ignore
+bary.f in a different block.
+
+Signed-off-by: Job Noorman <jnoorman@igalia.com>
+Part-of: <https://gitlab.freedesktop.org/mesa/mesa/-/merge_requests/44620>
+---
+ src/freedreno/ir3/ir3_sched.c | 13 +++++++++++++
+ 1 file changed, 13 insertions(+)
+
+diff --git a/src/freedreno/ir3/ir3_sched.c b/src/freedreno/ir3/ir3_sched.c
+index faa282d63942..3f7bb6fb5edf 100644
+--- a/src/freedreno/ir3/ir3_sched.c
++++ b/src/freedreno/ir3/ir3_sched.c
+@@ -528,6 +528,19 @@ check_instr(struct ir3_sched_ctx *ctx, struct ir3_sched_notes *notes,
+ 
+       for (unsigned i = 0; i < ir->baryfs_count; i++) {
+          struct ir3_instruction *baryf = ir->baryfs[i];
++         if (baryf->block != instr->block) {
++            /* It's impossible to schedule the kill relative to instructions in
++             * a different block so ignore those. This could, in theory, lead to
++             * issues on gens where the hw really wants kills before (ei).
++             * However, this shouldn't happen because we don't support
++             * interpolateAt* there which is the only source of bary.f
++             * instructions that cannot be moved to the first block (see
++             * 1201aa9332a ("ir3: do not move varying inputs that depend on
++             * unmovable instrs")). Just assert that we are new enough.
++             */
++            assert(is_scheduled(baryf) || ctx->compiler->gen >= 5);
++            continue;
++         }
+          if (baryf->flags & IR3_INSTR_UNUSED)
+             continue;
+          if (!is_scheduled(baryf)) {
+-- 
+GitLab
+

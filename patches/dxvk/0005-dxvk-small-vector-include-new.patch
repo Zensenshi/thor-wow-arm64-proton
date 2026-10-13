@@ -1,0 +1,12 @@
+diff --git a/src/util/util_small_vector.h b/src/util/util_small_vector.h
+index 3a0bd45..8c2138e 100644
+--- a/src/util/util_small_vector.h
++++ b/src/util/util_small_vector.h
+@@ -4,6 +4,7 @@
+ #include <cstddef>
+ #include <cstdint>
+ #include <memory>
++#include <new>
+ #include <initializer_list>
+ #include <type_traits>
+ #include <utility>
