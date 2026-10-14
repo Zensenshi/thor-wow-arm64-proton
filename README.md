@@ -24,4 +24,39 @@ See [docs/TECHNICAL.md](docs/TECHNICAL.md) for the details and [docs/TROUBLESHOO
 
 Follow [docs/BUILD.md](docs/BUILD.md) from top to bottom. Review the scripts before running them. Everything is built under `~/wow-arm64-work` (override with `WOW_WORK_DIR`); nothing is installed system-wide and no `sudo` is used on the host.
 
-Running the game this way is not supported by Blizzard and is at your own risk. For what the repository contains, where each patch comes from and under which licence, see [docs/LEGAL.md](docs/LEGAL.md) and [NOTICE.md](NOTICE.md).
+Running the game this way is not supported by Blizzard and is at your own risk.
+
+## Other devices
+
+Only the AYN Thor has been tested. Nothing in the patches is specific to it, so other Snapdragon 8 Gen 2 handhelds are expected to work if they match the same conditions:
+
+- They run Linux with Steam for ARM64, not Android. The scripts were written for ArmadaOS.
+- They use the same Proton build, `proton-11.0-2e-arm64`. The Wine patch is pinned to the matching Wine commit.
+- The kernel uses 4096-byte pages, and the graphics driver interface Mesa's default Turnip build expects.
+
+On another OS, drop `/usr/libexec/armada/armada-game-launch` from the launch options. Reports from other devices are welcome.
+
+## Licence
+
+The scripts and documentation are under the MIT licence in [LICENSE](LICENSE). The patches are not: each is offered under the licence of the upstream files it modifies.
+
+| Patches | Licence | Text |
+|---|---|---|
+| `patches/wine` | LGPL-2.1-or-later | [licenses/LGPL-2.1.txt](licenses/LGPL-2.1.txt), [licenses/Wine-LICENSE.txt](licenses/Wine-LICENSE.txt) |
+| `patches/dxvk` (DXVK files) | zlib/libpng | [licenses/DXVK-LICENSE.txt](licenses/DXVK-LICENSE.txt) |
+| `patches/dxvk` (dxbc-spirv files) | MIT | [licenses/dxbc-spirv-LICENSE.txt](licenses/dxbc-spirv-LICENSE.txt) |
+| `patches/mesa` | MIT | [licenses/Mesa-MIT.txt](licenses/Mesa-MIT.txt) |
+
+For what the repository contains and where each patch comes from, see [docs/LEGAL.md](docs/LEGAL.md) and [NOTICE.md](NOTICE.md).
+
+## Credits
+
+This project adds very little of its own. The work is in the projects it builds:
+
+- **Wine**, by the Wine project authors, and **Proton** and Valve's Wine tree, by Valve and its contributors.
+- **DXVK** and **dxbc-spirv**, by Philip Rebohle, Joshua Ashton and the DXVK contributors.
+- **Mesa**, **Freedreno** and **Turnip**, by the Mesa developers. The scheduler fix in `patches/mesa` was written by Job Noorman of Igalia and is included unmodified from upstream commit `2f8dc9eaba06`.
+- **LLVM-MinGW**, by Martin Storsjö.
+- **ArmadaOS**, the operating system this runs on.
+
+An earlier community build first showed that the ARM64 client runs once Wine's copied syscall stubs are handled. That finding is what this project set out to reproduce in the open.

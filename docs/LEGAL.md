@@ -27,7 +27,7 @@ An earlier community build with the same purpose as the Wine patch circulated on
 
 Parts of this repository, including the Wine patch, the scripts and the documentation, were drafted with AI assistance. The maintainer built and tested the result on the target device.
 
-The root MIT licence covers only the scripts and documentation. It does not relicense upstream code or the patches derived from it. See `NOTICE.md` and `licenses/README.md`.
+The root MIT licence covers only the scripts and documentation. It does not relicense upstream code or the patches derived from it. The upstream licence texts are in `licenses/`; see also `NOTICE.md`.
 
 ## If you distribute binaries
 
