@@ -4,6 +4,6 @@
 
 The bug it fixes: the IR3 scheduler holds back every `kill` until all `bary.f` instructions in the shader are scheduled, including ones in a later block. Such a `kill` can never become ready, so the shader fails to compile. With Mesa 26.2.4 one of the game's fragment shaders hits this right after the swapchain is created: release builds log `MESA: error: compile failed! (fs...)` and crash in `vkCreateGraphicsPipelines`; debug builds stop at the `sched_block` assertion in `ir3_sched.c`.
 
-**Status (2026-10-14):** validated on the device. A release Turnip built from the pristine `mesa-26.2.4` tarball plus this patch (Fedora 44 container, the options in `scripts/build-turnip.sh`) runs the game; it launches, stays open and holds 60 fps, with no Mesa errors in the log.
+**Status (2026-10-14):** validated on the device. A release Turnip built by `scripts/build-turnip.sh` from the `mesa-26.2.4` tag plus this patch, in the Fedora 44 container, runs the game; it launches, stays open and holds 60 fps, with no Mesa errors in the log.
 
 The touched Mesa source file is MIT-licensed in the pinned tree; preserve its upstream notices. Review Mesa's per-file and component licenses before redistribution. See `../../licenses/README.md`.

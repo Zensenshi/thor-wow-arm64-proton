@@ -15,7 +15,7 @@ STOCK_REAL="$(cd -- "$STOCK" && pwd -P)"
 [[ "$STOCK_REAL" != "$DEST" ]] || fail 'Stock and destination must differ.'
 case "$DEST/" in "$STOCK_REAL/"*) fail 'Destination cannot be inside stock Proton.';; esac
 case "$STOCK_REAL/" in "$DEST/"*) fail 'Stock Proton cannot be inside destination.';; esac
-[[ ! -e "$DEST" ]] || fail "Destination exists; move it aside manually: $DEST"
+[[ ! -e "$DEST" ]] || fail "Already installed: $DEST (remove it first with scripts/uninstall.sh)"
 A=("$BUILD/dlls/ntdll/ntdll.so" "$BUILD/dlls/ntdll/aarch64-windows/ntdll.dll" "$DXVK/src/dxgi/dxgi.dll" "$DXVK/src/d3d11/d3d11.dll")
 for f in "${A[@]}"; do [[ -f "$f" ]] || fail "Missing artifact: $f"; done
 "$ROOT/scripts/verify.sh" --artifacts-only "${A[@]}"

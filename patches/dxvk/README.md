@@ -1,6 +1,6 @@
 # DXVK patch notes
 
-These are build fixes only: each adds a standard header that the pinned sources use without including directly, which fails with the LLVM-MinGW 20260922 C++ library. None changes behaviour. They exist because Proton 11.0 ships its ARM64 DXVK as ARM64EC only, so a native ARM64 build of the same commit is needed.
+These are build fixes only: each adds a standard header that the pinned sources use without including directly, which fails with the LLVM-MinGW 20260922 C++ library. None changes behavior. They exist because Proton 11.0 ships its ARM64 DXVK as ARM64EC only, so a native ARM64 build of the same commit is needed.
 
 Against DXVK commit `a6764047e587178283fcde4073ae6e1410af594f`:
 

@@ -2,5 +2,4 @@
 set -euo pipefail
 ROOT="$(cd -- "$(dirname -- "$0")" && pwd)"
 "$ROOT/scripts/prerequisites.sh"
-printf '
-Host checks passed. Continue with docs/BUILD.md.\n'
+printf '\nNext: run ./install.sh, or follow docs/BUILD.md to do the steps by hand.\n'

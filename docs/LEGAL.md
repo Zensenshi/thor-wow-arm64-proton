@@ -14,23 +14,23 @@ They are parts of the compatibility layer the client runs on: Wine's `ntdll`, DX
 
 Blizzard does not support running its clients this way. Nothing here implies Blizzard's approval and no account-safety guarantee is given. Use is at your own risk.
 
-## Provenance and licences
+## Provenance and licenses
 
-| Material | Origin | Licence |
+| Material | Origin | License |
 |---|---|---|
-| `patches/wine` | Written for this repository against the pinned Valve Wine commit, from the observed failure and Wine's own ARM64 TEB and thread-data definitions. | LGPL-2.1-or-later, the licence of the Wine files it modifies. |
-| `patches/dxvk` | Written for this repository; each adds one standard header include. No functional change. | zlib/libpng (DXVK) and MIT (dxbc-spirv), the licences of the files they modify. |
+| `patches/wine` | Written for this repository against the pinned Valve Wine commit, from the observed failure and Wine's own ARM64 TEB and thread-data definitions. | LGPL-2.1-or-later, the license of the Wine files it modifies. |
+| `patches/dxvk` | Written for this repository; each adds one standard header include. No functional change. | zlib/libpng (DXVK) and MIT (dxbc-spirv), the licenses of the files they modify. |
 | `patches/mesa` | Unmodified upstream Mesa commit `2f8dc9eaba06`, with its author and sign-off preserved in the patch header. | MIT, as marked in the file it modifies. |
 | Scripts and documentation | Written for this repository. | MIT; see `LICENSE`. |
 
-An earlier community build with the same purpose as the Wine patch circulated only as a binary download, with no source repository and no stated licence. This project exists so that the source, the licence and the build steps are visible. Nothing from that download, neither its binaries nor its patch, is included in this repository.
+An earlier community build with the same purpose as the Wine patch circulated only as a binary download, with no source repository and no stated license. This project exists so that the source, the license and the build steps are visible. Nothing from that download, neither its binaries nor its patch, is included in this repository.
 
 Parts of this repository, including the Wine patch, the scripts and the documentation, were drafted with AI assistance. The maintainer built and tested the result on the target device.
 
-The root MIT licence covers only the scripts and documentation. It does not relicense upstream code or the patches derived from it. The upstream licence texts are in `licenses/`; see also `NOTICE.md`.
+The root MIT license covers only the scripts and documentation. It does not relicense upstream code or the patches derived from it. The upstream license texts are in `licenses/`; see also `NOTICE.md`.
 
 ## If you distribute binaries
 
-This repository deliberately distributes none. If you publish binaries built from it, the upstream obligations become yours: for Wine, the LGPL requires you to offer the corresponding source, including the patch, and to keep the licence and notices; for DXVK, dxbc-spirv and Mesa, keep their copyright and licence notices. Do not publish binaries until you have inventoried every component in them and met each licence.
+This repository deliberately distributes none. If you publish binaries built from it, the upstream obligations become yours: for Wine, the LGPL requires you to offer the corresponding source, including the patch, and to keep the license and notices; for DXVK, dxbc-spirv and Mesa, keep their copyright and license notices. Do not publish binaries until you have inventoried every component in them and met each license.
 
 Names and trademarks are used descriptively; see `NOTICE.md`.

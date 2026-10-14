@@ -84,3 +84,21 @@ VK_DRIVER_FILES=$HOME/wow-arm64-work/turnip-root/share/vulkan/icd.d/freedreno_ic
 The variables select the private Turnip for this game only; never replace the system Mesa or its ICD files. All variables go before the launcher command. Use the normal Blizzard launcher and official files for installing and updating; this project has no updater or account handling.
 
 For a log, add `PROTON_LOG=1 WINEDEBUG=+timestamp,+pid,+tid,+loaddll` in front. `PROTON_LOG=1` on its own enables exception tracing that produces very large logs with this client.
+
+## Uninstall
+
+1. In Steam, set the game back to another compatibility tool and clear its launch options.
+2. Remove the private Proton tool:
+
+   ```sh
+   scripts/uninstall.sh
+   ```
+
+3. Optionally, remove the build files and the two containers:
+
+   ```sh
+   rm -rf ~/wow-arm64-work
+   distrobox rm -f wow-wine-build wow-mesa-build
+   ```
+
+Stock Proton, the game and its prefix are not touched by any of these.

@@ -10,9 +10,9 @@ DXVK: Proton 11.0 builds its ARM64 DXVK as ARM64EC only (Proton Experimental add
 
 Installer copies stock Proton and replaces only `wine/aarch64-unix/ntdll.so`, `wine/aarch64-windows/ntdll.dll`, `wine/dxvk/aarch64-windows/dxgi.dll`, and `wine/dxvk/aarch64-windows/d3d11.dll` under the private clone's `files/lib` (`files/lib64` on layouts that use it), and writes the clone's `compatibilitytool.vdf`. Private Turnip uses per-process `VK_DRIVER_FILES` and `LD_LIBRARY_PATH`; never overwrite system Mesa/ICDs.
 
-`scripts/verify.sh` checks the new `0x368` syscall tail count and that `ntdll.dll` has the ARM64X hybrid sections. Hashes from the device's start-to-finish script run are in `VERSION-PINS`; they depend on build paths and toolchain.
+`scripts/verify.sh` checks the new `0x368` syscall tail count, that `ntdll.dll` has the ARM64X hybrid sections, and that both DXVK DLLs have PE machine `0xaa64`. Hashes from the device's start-to-finish script run are in `VERSION-PINS`; they depend on build paths and toolchain.
 
-Turnip: unpatched Mesa 26.2.4 cannot compile one of the game's fragment shaders (release builds log `compile failed` and crash in `vkCreateGraphicsPipelines`; debug builds assert in `ir3_sched.c` `sched_block`), because the scheduler waits for `bary.f` instructions in other blocks before scheduling a `kill`. `patches/mesa` backports the upstream fix, commit `2f8dc9eaba06`. DXVK verification reads the PE COFF machine field and requires `0xaa64`.
+Turnip: unpatched Mesa 26.2.4 cannot compile one of the game's fragment shaders (release builds log `compile failed` and crash in `vkCreateGraphicsPipelines`; debug builds assert in `ir3_sched.c` `sched_block`), because the scheduler waits for `bary.f` instructions in other blocks before scheduling a `kill`. `patches/mesa` backports the upstream fix, commit `2f8dc9eaba06`.
 
 ## Other devices
 
