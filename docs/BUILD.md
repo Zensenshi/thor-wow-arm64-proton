@@ -13,12 +13,11 @@ Environment overrides, all optional: `WOW_WORK_DIR` (work directory), `WOW_TOOL_
 The ArmadaOS host has no compiler, linker or `make`, so the builds run in two distrobox containers that share your home directory. These are the images and packages the validated builds used:
 
 ```sh
-distrobox create --name wow-wine-build --image docker.io/library/ubuntu:24.04
-distrobox enter wow-wine-build -- sudo apt install -y build-essential clang lld autoconf flex bison gettext pkg-config perl python3 git patch curl xz-utils meson ninja-build glslang-tools
+distrobox create --yes --name wow-wine-build --image docker.io/library/ubuntu:24.04
+distrobox enter wow-wine-build -- sh -c 'sudo apt-get update && sudo apt-get install -y build-essential clang lld autoconf flex bison gettext pkg-config perl python3 git patch curl xz-utils meson ninja-build glslang-tools'
 
-distrobox create --name wow-mesa-build --image registry.fedoraproject.org/fedora:44
-distrobox enter wow-mesa-build -- sudo dnf install -y git
-distrobox enter wow-mesa-build -- sudo dnf builddep -y mesa
+distrobox create --yes --name wow-mesa-build --image registry.fedoraproject.org/fedora:44
+distrobox enter wow-mesa-build -- sh -c 'sudo dnf install -y git && sudo dnf builddep -y mesa'
 ```
 
 ## 3. Toolchain

@@ -51,12 +51,10 @@ For what the repository contains and where each patch comes from, see [docs/LEGA
 
 ## Credits
 
-This project adds very little of its own. The work is in the projects it builds:
+- **Maintainer and author:** [@Zensenshi](https://github.com/Zensenshi)
+- **AI assistance:** ChatGPT helped with research, debugging, and drafting patches and documentation.
+- **Upstream projects:** Valve Proton, Valve Wine, DXVK and dxbc-spirv, Mesa Freedreno/Turnip, LLVM-MinGW, and ArmadaOS.
 
-- **Wine**, by the Wine project authors, and **Proton** and Valve's Wine tree, by Valve and its contributors.
-- **DXVK** and **dxbc-spirv**, by Philip Rebohle, Joshua Ashton and the DXVK contributors.
-- **Mesa**, **Freedreno** and **Turnip**, by the Mesa developers. The scheduler fix in `patches/mesa` was written by Job Noorman of Igalia and is included unmodified from upstream commit `2f8dc9eaba06`.
-- **LLVM-MinGW**, by Martin Storsjö.
-- **ArmadaOS**, the operating system this runs on.
+Upstream copyright notices and licences are preserved; see the [licenses/](licenses/) folder.
 
-An earlier community build first showed that the ARM64 client runs once Wine's copied syscall stubs are handled. That finding is what this project set out to reproduce in the open.
+This project is unofficial. It is not affiliated with or endorsed by Blizzard Entertainment, and no Blizzard software or assets are included.
