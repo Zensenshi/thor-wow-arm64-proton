@@ -13,3 +13,13 @@ Installer copies stock Proton and replaces only `wine/aarch64-unix/ntdll.so`, `w
 `scripts/verify.sh` checks the new `0x368` syscall tail count and that `ntdll.dll` has the ARM64X hybrid sections. Hashes from the device's start-to-finish script run are in `VERSION-PINS`; they depend on build paths and toolchain.
 
 Turnip: unpatched Mesa 26.2.4 cannot compile one of the game's fragment shaders (release builds log `compile failed` and crash in `vkCreateGraphicsPipelines`; debug builds assert in `ir3_sched.c` `sched_block`), because the scheduler waits for `bary.f` instructions in other blocks before scheduling a `kill`. `patches/mesa` backports the upstream fix, commit `2f8dc9eaba06`. DXVK verification reads the PE COFF machine field and requires `0xaa64`.
+
+## Other devices
+
+Only the AYN Thor has been tested. Nothing in the patches is specific to it, so other Snapdragon 8 Gen 2 handhelds are expected to work if they match the same conditions:
+
+- They run Linux with Steam for ARM64, not Android. The scripts were written for ArmadaOS.
+- They use the same Proton build, `proton-11.0-2e-arm64`. The Wine patch is pinned to the matching Wine commit, and a different Proton means a different Wine.
+- The kernel uses 4096-byte pages, which `setup.sh` checks, and the graphics driver interface that Mesa's default Turnip build expects. A Linux port built on a vendor Android kernel may need a different Mesa build option.
+
+On another OS, drop `/usr/libexec/armada/armada-game-launch` from the launch options.

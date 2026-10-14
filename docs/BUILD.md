@@ -1,6 +1,6 @@
 # Build and install
 
-Run everything on the AYN Thor. Builds stay under `~/wow-arm64-work`; nothing is installed to `/usr` and the host needs no `sudo`.
+Run everything on the AYN Thor, from the repository folder. Builds stay under `~/wow-arm64-work`; nothing is installed to `/usr` and the host needs no `sudo`. The README has the same steps in short form.
 
 Environment overrides, all optional: `WOW_WORK_DIR` (work directory), `WOW_TOOL_NAME` (name of the private Proton copy, default `Proton-11-ARM64-WoW`), `LLVM_MINGW_BIN`, `JOBS`.
 
@@ -27,9 +27,9 @@ distrobox enter wow-mesa-build -- sh -c 'sudo dnf install -y git && sudo dnf bui
 ## 4. Builds
 
 ```sh
-distrobox enter wow-wine-build -- scripts/build-wine.sh
-distrobox enter wow-wine-build -- scripts/build-dxvk.sh
-distrobox enter wow-mesa-build -- scripts/build-turnip.sh
+distrobox enter wow-wine-build -- "$PWD/scripts/build-wine.sh"
+distrobox enter wow-wine-build -- "$PWD/scripts/build-dxvk.sh"
+distrobox enter wow-mesa-build -- "$PWD/scripts/build-turnip.sh"
 ```
 
 - **Wine:** fetches the pinned Valve Wine commit, applies `patches/wine`, generates the sources the tree ships without (`make_vulkan`, `make_specfiles`, `make_requests`, `autoreconf`, as Proton's own build does), configures an ARM64X hybrid build (`--enable-archs=aarch64,arm64ec`) and builds only the `ntdll` targets. Outputs: `wine-build-wow/dlls/ntdll/ntdll.so` and `wine-build-wow/dlls/ntdll/aarch64-windows/ntdll.dll`.

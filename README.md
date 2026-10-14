@@ -1,60 +1,75 @@
-# ArmadaOS AYN Thor WoW ARM64 compatibility project
+# WoW ARM64 on AYN Thor (ArmadaOS)
 
-Source-only build notes and scripts for testing an unmodified Windows ARM64 game client with open-source compatibility components on AYN Thor/ArmadaOS. This independent project is not affiliated with, endorsed by, or sponsored by Blizzard Entertainment, Valve, or AYN. “World of Warcraft”, “Blizzard”, “Battle.net”, “ArmadaOS”, “Proton”, and related marks belong to their owners; names are used only to identify compatibility targets and upstream projects.
+Build scripts and patches for running the unmodified World of Warcraft ARM64 client on an AYN Thor under ArmadaOS, through Steam's Proton.
 
-**No Blizzard software or assets are distributed.** Obtain/update the game only through official Blizzard channels. This project does not authenticate, download, update, or launch Blizzard services on your behalf.
+**Unofficial.** Not affiliated with or endorsed by Blizzard Entertainment, Valve or AYN. This repository is source only: it contains no binaries and no Blizzard software or assets. You need your own copy of the game, installed and updated through Blizzard's launcher.
 
 ## Status
 
-Checked on an AYN Thor (ArmadaOS `20261010.c3d178c`, stock Proton `proton-11.0-2e-arm64`) on 2026-10-14: with the three components below built from this repository's patches, the ARM64 client launches, stays open and holds 60 fps at 720p on low detail. That result is from a start-to-finish run of the scripts in a clean work directory on that device. Longer sessions have not been characterised. Pins in `VERSION-PINS` record that one setup, not a guarantee of future compatibility.
+Tested on an AYN Thor (ArmadaOS `20261010.c3d178c`, Proton `proton-11.0-2e-arm64`) on 2026-10-14. The client launches and holds 60 fps at 720p on low detail. Longer sessions have not been characterised, and a Proton or game update may break it. Exact versions are in [VERSION-PINS](VERSION-PINS).
 
-## What it changes
+## What it does
 
-Stock Proton is never modified. The scripts make a private copy under `~/.local/share/Steam/compatibilitytools.d/` and replace four files in it; the graphics driver is a private build selected per launch.
+Stock Proton is left untouched. The scripts build three components on your device and install them into a private copy of Proton.
 
-| Component | Problem with stock | What this repository does |
+| Component | Why stock fails | Fix |
 |---|---|---|
-| Wine `ntdll` | The client copies syscall stubs out of `ntdll.dll`; the stock ARM64 stub depends on a PC-relative literal that the copy loses, and the game crashes on a null jump. | `patches/wine`: independently drafted patch that loads the dispatcher through the TEB instead. Built as an ARM64X hybrid, as Proton requires. |
-| DXVK | Proton 11.0 ships its ARM64 DXVK as ARM64EC only, which a native ARM64 process cannot load. | Builds the same DXVK commit for native ARM64 (`patches/dxvk` are build fixes only). |
-| Mesa Turnip | Mesa 26.2.4 cannot compile one of the game's fragment shaders. | `patches/mesa`: unmodified backport of the upstream fix. |
+| Wine `ntdll` | The client copies Wine's syscall stubs, and the copies crash. | A small Wine patch so copied stubs keep working. |
+| DXVK | Proton 11.0 ships it in a form a native ARM64 game cannot load. | The same DXVK version, built for native ARM64. |
+| Mesa Turnip | Mesa 26.2.4 cannot compile one of the game's shaders. | The upstream fix, backported. |
 
-See [docs/TECHNICAL.md](docs/TECHNICAL.md) for the details and [docs/TROUBLESHOOTING.md](docs/TROUBLESHOOTING.md) for the failure signatures.
+More detail is in [docs/TECHNICAL.md](docs/TECHNICAL.md), and known failure messages are in [docs/TROUBLESHOOTING.md](docs/TROUBLESHOOTING.md).
 
-## Use
+## Install
 
-Follow [docs/BUILD.md](docs/BUILD.md) from top to bottom. Review the scripts before running them. Everything is built under `~/wow-arm64-work` (override with `WOW_WORK_DIR`); nothing is installed system-wide and no `sudo` is used on the host.
+You need Steam with **Proton 11.0 (ARM64)** installed, the game already installed and added to Steam, `distrobox`, several GB of free space and about 40 minutes. Everything is built under `~/wow-arm64-work`; nothing is installed system-wide.
 
-Running the game this way is not supported by Blizzard and is at your own risk.
+**1. Get the scripts and check the device**
+
+```sh
+git clone https://github.com/Zensenshi/thor-wow-arm64-proton.git
+cd thor-wow-arm64-proton
+./setup.sh
+```
+
+**2. Create the two build containers** (once)
+
+```sh
+distrobox create --yes --name wow-wine-build --image docker.io/library/ubuntu:24.04
+distrobox enter wow-wine-build -- sh -c 'sudo apt-get update && sudo apt-get install -y build-essential clang lld autoconf flex bison gettext pkg-config perl python3 git patch curl xz-utils meson ninja-build glslang-tools'
+
+distrobox create --yes --name wow-mesa-build --image registry.fedoraproject.org/fedora:44
+distrobox enter wow-mesa-build -- sh -c 'sudo dnf install -y git && sudo dnf builddep -y mesa'
+```
+
+**3. Build and install**
+
+```sh
+scripts/fetch-llvm-mingw.sh
+distrobox enter wow-wine-build -- "$PWD/scripts/build-wine.sh"
+distrobox enter wow-wine-build -- "$PWD/scripts/build-dxvk.sh"
+distrobox enter wow-mesa-build -- "$PWD/scripts/build-turnip.sh"
+STOCK_PROTON_DIR="$HOME/.local/share/Steam/steamapps/common/Proton 11.0 (ARM64)" scripts/install-proton.sh
+```
+
+**4. Set up the game in Steam**
+
+Restart Steam, set the game's compatibility tool to `Proton-11-ARM64-WoW`, and use these launch options:
+
+```
+VK_DRIVER_FILES=$HOME/wow-arm64-work/turnip-root/share/vulkan/icd.d/freedreno_icd.aarch64.json LD_LIBRARY_PATH=$HOME/wow-arm64-work/turnip-root/lib64${LD_LIBRARY_PATH:+:$LD_LIBRARY_PATH} /usr/libexec/armada/armada-game-launch %command% -d3d11
+```
+
+To remove it again, run `scripts/uninstall.sh`. The full guide, with what each step does, is [docs/BUILD.md](docs/BUILD.md).
 
 ## Other devices
 
-Only the AYN Thor has been tested. Nothing in the patches is specific to it, so other Snapdragon 8 Gen 2 handhelds are expected to work if they match the same conditions:
+Only the AYN Thor has been tested. Other Snapdragon 8 Gen 2 handhelds should work if they run Linux with Steam for ARM64 and the same Proton build. On an OS other than ArmadaOS, drop `/usr/libexec/armada/armada-game-launch` from the launch options. Reports are welcome.
 
-- They run Linux with Steam for ARM64, not Android. The scripts were written for ArmadaOS.
-- They use the same Proton build, `proton-11.0-2e-arm64`. The Wine patch is pinned to the matching Wine commit.
-- The kernel uses 4096-byte pages, and the graphics driver interface Mesa's default Turnip build expects.
+## Licence and credits
 
-On another OS, drop `/usr/libexec/armada/armada-game-launch` from the launch options. Reports from other devices are welcome.
+The scripts and documentation are under the [MIT licence](LICENSE). Each patch carries the licence of the upstream project it modifies; see [licenses/](licenses/) and [docs/LEGAL.md](docs/LEGAL.md).
 
-## Licence
+Maintained by [@Zensenshi](https://github.com/Zensenshi), with AI assistance from ChatGPT and Claude. Built on Valve's Proton and Wine, DXVK, Mesa Turnip, LLVM-MinGW and ArmadaOS.
 
-The scripts and documentation are under the MIT licence in [LICENSE](LICENSE). The patches are not: each is offered under the licence of the upstream files it modifies.
-
-| Patches | Licence | Text |
-|---|---|---|
-| `patches/wine` | LGPL-2.1-or-later | [licenses/LGPL-2.1.txt](licenses/LGPL-2.1.txt), [licenses/Wine-LICENSE.txt](licenses/Wine-LICENSE.txt) |
-| `patches/dxvk` (DXVK files) | zlib/libpng | [licenses/DXVK-LICENSE.txt](licenses/DXVK-LICENSE.txt) |
-| `patches/dxvk` (dxbc-spirv files) | MIT | [licenses/dxbc-spirv-LICENSE.txt](licenses/dxbc-spirv-LICENSE.txt) |
-| `patches/mesa` | MIT | [licenses/Mesa-MIT.txt](licenses/Mesa-MIT.txt) |
-
-For what the repository contains and where each patch comes from, see [docs/LEGAL.md](docs/LEGAL.md) and [NOTICE.md](NOTICE.md).
-
-## Credits
-
-- **Maintainer and author:** [@Zensenshi](https://github.com/Zensenshi)
-- **AI assistance:** ChatGPT and Claude helped with research, debugging, and drafting patches and documentation.
-- **Upstream projects:** Valve Proton, Valve Wine, DXVK and dxbc-spirv, Mesa Freedreno/Turnip, LLVM-MinGW, and ArmadaOS.
-
-Upstream copyright notices and licences are preserved; see the [licenses/](licenses/) folder.
-
-This project is unofficial. It is not affiliated with or endorsed by Blizzard Entertainment, and no Blizzard software or assets are included.
+Blizzard does not support running the client this way. Use is at your own risk.
