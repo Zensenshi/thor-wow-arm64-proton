@@ -22,45 +22,23 @@ More detail is in [docs/TECHNICAL.md](docs/TECHNICAL.md), and known failure mess
 
 ## Install
 
-You need Steam with **Proton 11.0 (ARM64)** installed, the game already installed and added to Steam, `distrobox`, several GB of free space and about 40 minutes. Everything is built under `~/wow-arm64-work`; nothing is installed system-wide.
-
-**1. Get the scripts and check the device**
+You need Steam with **Proton 11.0 (ARM64)** installed, the game already installed and added to Steam, `distrobox`, several GB of free space and about 40 minutes.
 
 ```sh
 git clone https://github.com/Zensenshi/thor-wow-arm64-proton.git
 cd thor-wow-arm64-proton
-./setup.sh
+./install.sh
 ```
 
-**2. Create the two build containers** (once)
+The script checks the device, creates two build containers (`wow-wine-build` and `wow-mesa-build`), builds the three components under `~/wow-arm64-work`, and installs the private Proton tool. If a step fails, it stops and shows the end of that step's log.
 
-```sh
-distrobox create --yes --name wow-wine-build --image docker.io/library/ubuntu:24.04
-distrobox enter wow-wine-build -- sh -c 'sudo apt-get update && sudo apt-get install -y build-essential clang lld autoconf flex bison gettext pkg-config perl python3 git patch curl xz-utils meson ninja-build glslang-tools'
-
-distrobox create --yes --name wow-mesa-build --image registry.fedoraproject.org/fedora:44
-distrobox enter wow-mesa-build -- sh -c 'sudo dnf install -y git && sudo dnf builddep -y mesa'
-```
-
-**3. Build and install**
-
-```sh
-scripts/fetch-llvm-mingw.sh
-distrobox enter wow-wine-build -- "$PWD/scripts/build-wine.sh"
-distrobox enter wow-wine-build -- "$PWD/scripts/build-dxvk.sh"
-distrobox enter wow-mesa-build -- "$PWD/scripts/build-turnip.sh"
-STOCK_PROTON_DIR="$HOME/.local/share/Steam/steamapps/common/Proton 11.0 (ARM64)" scripts/install-proton.sh
-```
-
-**4. Set up the game in Steam**
-
-Restart Steam, set the game's compatibility tool to `Proton-11-ARM64-WoW`, and use these launch options:
+Then, in Steam: restart Steam, set the game's compatibility tool to `Proton-11-ARM64-WoW`, and use these launch options (the script prints them as well):
 
 ```
 VK_DRIVER_FILES=$HOME/wow-arm64-work/turnip-root/share/vulkan/icd.d/freedreno_icd.aarch64.json LD_LIBRARY_PATH=$HOME/wow-arm64-work/turnip-root/lib64${LD_LIBRARY_PATH:+:$LD_LIBRARY_PATH} /usr/libexec/armada/armada-game-launch %command% -d3d11
 ```
 
-To remove it again, run `scripts/uninstall.sh`. The full guide, with what each step does, is [docs/BUILD.md](docs/BUILD.md).
+To remove it again, run `scripts/uninstall.sh`. To run the steps one at a time, or to see what each does, read [docs/BUILD.md](docs/BUILD.md).
 
 ## Other devices
 

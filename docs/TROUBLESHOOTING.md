@@ -1,5 +1,6 @@
 # Troubleshooting
 
+- `install.sh` stops with `FAILED`: it shows the end of the failing step's log; the full logs are in `~/wow-arm64-work/logs`. Find the matching message below. To start over after a successful install, remove the tool first with `scripts/uninstall.sh`.
 - Host check fails: verify ArmadaOS, `uname -m` = `aarch64`, `getconf PAGESIZE` = `4096`.
 - Wine build refuses with `No permitted Wine patch`: the patch file is missing or empty; restore `patches/wine/0001-copied-syscall-dispatch.patch`.
 - Patch check fails: stop. Do not force a patch or switch revisions.

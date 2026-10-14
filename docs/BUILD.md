@@ -1,8 +1,10 @@
 # Build and install
 
-Run everything on the AYN Thor, from the repository folder. Builds stay under `~/wow-arm64-work`; nothing is installed to `/usr` and the host needs no `sudo`. The README has the same steps in short form.
+`./install.sh` runs steps 1 to 5 in one go and prints the Steam settings at the end. This guide is the same process done by hand, with what each step does.
 
-Environment overrides, all optional: `WOW_WORK_DIR` (work directory), `WOW_TOOL_NAME` (name of the private Proton copy, default `Proton-11-ARM64-WoW`), `LLVM_MINGW_BIN`, `JOBS`.
+Run everything on the AYN Thor, from the repository folder. Builds stay under `~/wow-arm64-work`; nothing is installed to `/usr` and the host needs no `sudo`.
+
+Environment overrides, all optional: `WOW_WORK_DIR` (work directory), `WOW_TOOL_NAME` (name of the private Proton copy, default `Proton-11-ARM64-WoW`), `STOCK_PROTON_DIR`, `LLVM_MINGW_BIN`, `JOBS`, and for `install.sh` the container names `WOW_WINE_CONTAINER` and `WOW_MESA_CONTAINER`.
 
 ## 1. Host check
 
