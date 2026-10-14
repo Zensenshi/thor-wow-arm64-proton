@@ -1,16 +1,32 @@
 # Build and install
 
-`./install.sh` runs steps 1 to 5 in one go and prints the Steam settings at the end. This guide is the same process done by hand, with what each step does.
+Run everything on the AYN Thor. Builds stay under `~/wow-arm64-work`; nothing is installed to `/usr` and the host needs no `sudo`.
 
-Run everything on the AYN Thor, from the repository folder. Builds stay under `~/wow-arm64-work`; nothing is installed to `/usr` and the host needs no `sudo`.
+## Quick install
 
-Environment overrides, all optional: `WOW_WORK_DIR` (work directory), `WOW_TOOL_NAME` (name of the private Proton copy, default `Proton-11-ARM64-WoW`), `STOCK_PROTON_DIR`, `LLVM_MINGW_BIN`, `JOBS`, and for `install.sh` the container names `WOW_WINE_CONTAINER` and `WOW_MESA_CONTAINER`.
+From the repository folder:
 
-## 1. Host check
+```sh
+./install.sh
+```
+
+It runs steps 1 to 5 below in order: it checks the device, creates the two build containers if they don't exist and installs their packages, downloads the toolchain, runs the three builds, verifies the result and installs the private Proton tool. At the end it prints the Steam settings from step 6 with the paths for your machine. It was tested from a clean start on the device on 2026-10-14.
+
+- **Output:** each step prints one line and the builds are quiet, about 40 minutes in total. Full logs go to `~/wow-arm64-work/logs`.
+- **On failure:** it stops at the failing step and shows the end of that step's log. Fix the cause and run it again; finished work is reused.
+- **Already installed:** it refuses to overwrite the tool. To rebuild, for example after a Proton update, run `scripts/uninstall.sh` and then `./install.sh` again.
+
+Environment overrides, all optional: `WOW_WORK_DIR` (work directory), `WOW_TOOL_NAME` (name of the private Proton copy, default `Proton-11-ARM64-WoW`), `STOCK_PROTON_DIR`, `LLVM_MINGW_BIN`, `JOBS`, and the container names `WOW_WINE_CONTAINER` and `WOW_MESA_CONTAINER` (defaults `wow-wine-build` and `wow-mesa-build`).
+
+## Manual steps
+
+The same process by hand, with what each step does. Run the commands from the repository folder.
+
+### 1. Host check
 
 `./setup.sh` checks aarch64, 4096-byte pages and the few host tools the scripts need. Install stock Proton `proton-11.0-2e-arm64` (build ID `1791559733`) through Steam; it normally lands in `~/.local/share/Steam/steamapps/common/Proton 11.0 (ARM64)`.
 
-## 2. Build containers
+### 2. Build containers
 
 The ArmadaOS host has no compiler, linker or `make`, so the builds run in two distrobox containers that share your home directory. These exact commands were tested from scratch on the device on 2026-10-14, followed by a full build:
 
@@ -22,11 +38,11 @@ distrobox create --yes --name wow-mesa-build --image registry.fedoraproject.org/
 distrobox enter wow-mesa-build -- sh -c 'sudo dnf install -y git && sudo dnf builddep -y mesa'
 ```
 
-## 3. Toolchain
+### 3. Toolchain
 
 `scripts/fetch-llvm-mingw.sh` downloads LLVM-MinGW 20260922 from its GitHub release, checks SHA256 `07d21263c56bfe9a713db6fdb3f7434bf4c121a005e40397d3b4c0170fb06769` and unpacks it into the work directory, where the build scripts look for it.
 
-## 4. Builds
+### 4. Builds
 
 ```sh
 distrobox enter wow-wine-build -- "$PWD/scripts/build-wine.sh"
@@ -38,7 +54,7 @@ distrobox enter wow-mesa-build -- "$PWD/scripts/build-turnip.sh"
 - **DXVK:** fetches the pinned DXVK commit and its submodules, applies the include patches and cross-builds native ARM64 DLLs. Outputs: `dxvk-arm64/build.arm64/src/dxgi/dxgi.dll` and `.../src/d3d11/d3d11.dll`.
 - **Turnip:** fetches Mesa tag `mesa-26.2.4`, applies the upstream scheduler fix, and installs a release build into the private `turnip-root` prefix.
 
-## 5. Verify and install
+### 5. Verify and install
 
 ```sh
 W=~/wow-arm64-work
@@ -56,7 +72,7 @@ STOCK_PROTON_DIR="$HOME/.local/share/Steam/steamapps/common/Proton 11.0 (ARM64)"
 
 It also writes the copy's `compatibilitytool.vdf` so Steam lists it. An existing destination is never overwritten; `scripts/uninstall.sh` removes the private copy.
 
-## 6. Steam
+### 6. Steam
 
 Restart Steam, then on the game's entry choose the compatibility tool `Proton-11-ARM64-WoW` and set the launch options:
 
