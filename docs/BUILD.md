@@ -10,7 +10,7 @@ Environment overrides, all optional: `WOW_WORK_DIR` (work directory), `WOW_TOOL_
 
 ## 2. Build containers
 
-The ArmadaOS host has no compiler, linker or `make`, so the builds run in two distrobox containers that share your home directory. These are the images and packages the validated builds used:
+The ArmadaOS host has no compiler, linker or `make`, so the builds run in two distrobox containers that share your home directory. These exact commands were tested from scratch on the device on 2026-10-14, followed by a full build:
 
 ```sh
 distrobox create --yes --name wow-wine-build --image docker.io/library/ubuntu:24.04
