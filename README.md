@@ -52,7 +52,7 @@ For what the repository contains and where each patch comes from, see [docs/LEGA
 ## Credits
 
 - **Maintainer and author:** [@Zensenshi](https://github.com/Zensenshi)
-- **AI assistance:** ChatGPT helped with research, debugging, and drafting patches and documentation.
+- **AI assistance:** ChatGPT and Claude helped with research, debugging, and drafting patches and documentation.
 - **Upstream projects:** Valve Proton, Valve Wine, DXVK and dxbc-spirv, Mesa Freedreno/Turnip, LLVM-MinGW, and ArmadaOS.
 
 Upstream copyright notices and licences are preserved; see the [licenses/](licenses/) folder.
