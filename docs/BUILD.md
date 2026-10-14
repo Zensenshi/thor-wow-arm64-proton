@@ -14,7 +14,8 @@ It runs steps 1 to 5 below in order: it checks the device, creates the two build
 
 - **Output:** each step prints one line and the builds are quiet, about 40 minutes in total. Full logs go to `~/wow-arm64-work/logs`.
 - **On failure:** it stops at the failing step and shows the end of that step's log. Fix the cause and run it again; finished work is reused.
-- **Already installed:** it refuses to overwrite the tool. To rebuild, for example after a Proton update, run `scripts/uninstall.sh` and then `./install.sh` again.
+- **Already installed:** it refuses to overwrite the tool. To reinstall, run `scripts/uninstall.sh` and then `./install.sh` again.
+- **Proton updates:** the patches are pinned to `proton-11.0-2e-arm64`. If Steam updates Proton 11.0 (ARM64), reinstalling copies the new Proton but still builds the old pinned Wine, which may not match. Check `VERSION-PINS` against the new build before relying on it.
 
 Environment overrides, all optional: `WOW_WORK_DIR` (work directory), `WOW_TOOL_NAME` (name of the private Proton copy, default `Proton-11-ARM64-WoW`), `STOCK_PROTON_DIR`, `LLVM_MINGW_BIN`, `JOBS`, and the container names `WOW_WINE_CONTAINER` and `WOW_MESA_CONTAINER` (defaults `wow-wine-build` and `wow-mesa-build`).
 
